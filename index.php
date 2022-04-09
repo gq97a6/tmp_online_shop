@@ -87,7 +87,7 @@
         $cat = $_GET['cat'];
         if(empty($cat)) $cat = "Comics";
 
-        $sql = 'SELECT title, first_name, last_name, sub_cat, cat FROM books 
+        $sql = 'SELECT books.id, title, first_name, last_name, sub_cat, cat FROM books 
           INNER JOIN book_authors ON author_id = book_authors.id
           INNER JOIN book_sub_categories ON sub_cat_id = book_sub_categories.id
           INNER JOIN book_categories ON cat_id = book_categories.id
@@ -99,7 +99,7 @@
           $cat = "";
           while ($row = $result->fetch_assoc()) {
             echo '<div class="bg-neutral-200 aspect-video p-3 flex flex-row">
-              <div class="aspect-square border-2 border-neutral-600">
+              <div class="aspect-square border-2 border-neutral-600" onclick="openBook(' . $row["id"] . ')">
                 <img src="/res/placeholder.svg" class="w-full mr-1" />
               </div>
               <div class="grow pl-2 flex flex-col">
@@ -107,7 +107,7 @@
                   <h1 class="font-bold"> ' . $row["title"] . ' </h1> <br />
                   ' . $row["first_name"] . ' ' . $row["last_name"] . '
                 </div>
-                <div class="h-14 w-full border-2 border-neutral-600 text-lg items-center flex items-center justify-center">
+                <div class="h-14 w-full border-2 border-neutral-600 text-lg items-center flex items-center justify-center" onclick="addCart(' . $row["id"] . ')">
                   DODAJ DO KOSZYKA
                 </div>
               </div>
@@ -138,7 +138,16 @@
       }
 
       function openCat(el) {
-        window.location.replace('?cat=' + el.innerText.replace('&', '').replace(/\s+/g, ''));
+        window.location.href = '?cat=' + el.innerText.replace('&', '').replace(/\s+/g, '');
+      }
+
+      function openBook(id) {
+        console.log("open")
+        window.location.href = "/book?id=" + id;
+      }
+
+      function addCart(el) {
+        console.log("add")
       }
     </script>
 
