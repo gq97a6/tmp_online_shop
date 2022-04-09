@@ -3,7 +3,7 @@
 
 <head>
   <title>Betabooks</title>
-  <link rel="icon" href="favi.svg">
+  <link rel="icon" href="/res/favi.svg">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,19 +27,19 @@
 
   <div class="flex h-20 w-full bg-neutral-700 shadow-md shadow-neutral-500 mb-2 opacity-90 items-center pl-4 text-4xl">
     <div class="flex flex-row max-h-full mr-2 block md:hidden">
-      <img src="sidebar.svg" class="w-12" onclick="openSidebar()" />
+      <img src="/res/sidebar.svg" class="w-12" onclick="openSidebar()" />
     </div>
-    <span class="grow">Betabooks</span>
+    <span class="grow" id="title">Betabooks</span>
     <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="send.svg" class="w-12 mr-1" />
+      <img src="/res/send.svg" class="w-12 mr-1" />
       <span class="hidden md:block">Koszyk</span>
     </div>
     <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="login.svg" class="w-12 mr-1" />
+      <img src="/res/login.svg" class="w-12 mr-1" />
       <span class="hidden md:block">Logowanie</span>
     </div>
     <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="register.svg" class="w-12 mr-1" />
+      <img src="/res/register.svg" class="w-12 mr-1" />
       <span class="hidden md:block">Rejestracja</span>
     </div>
   </div>
@@ -84,11 +84,14 @@
         //$sql = "SELECT title, first_name, last_name FROM books 
         //INNER JOIN book_authors ON author_id = book_authors.id";
 
+        $cat = $_GET['cat'];
+        if(empty($cat)) $cat = "Comics";
+
         $sql = 'SELECT title, first_name, last_name, sub_cat, cat FROM books 
           INNER JOIN book_authors ON author_id = book_authors.id
           INNER JOIN book_sub_categories ON sub_cat_id = book_sub_categories.id
           INNER JOIN book_categories ON cat_id = book_categories.id
-          WHERE REPLACE(REPLACE(cat, "&", ""), " ", "") = "' . $_GET['cat'] . '"';
+          WHERE REPLACE(REPLACE(cat, "&", ""), " ", "") = "' . $cat . '"';
 
         $result = $conn->query($sql);
 
@@ -97,7 +100,7 @@
           while ($row = $result->fetch_assoc()) {
             echo '<div class="bg-neutral-200 aspect-video p-3 flex flex-row">
               <div class="aspect-square border-2 border-neutral-600">
-                <img src="placeholder.svg" class="w-full mr-1" />
+                <img src="/res/placeholder.svg" class="w-full mr-1" />
               </div>
               <div class="grow pl-2 flex flex-col">
                 <div class="grow text-2xl p-2">
