@@ -25,26 +25,33 @@
 
 <body class="min-h-full flex flex-col p-2 bg-neutral-200 text-neutral-100">
 
-  <div class="flex h-20 w-full bg-neutral-700 shadow-md shadow-neutral-500 mb-2 opacity-90 items-center pl-4 text-4xl">
-    <div class="flex flex-row max-h-full mr-2 block md:hidden">
-      <img src="/res/sidebar.svg" class="w-12" onclick="openSidebar()" />
-    </div>
-    <span class="grow" id="title">Betabooks</span>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/send.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Koszyk</span>
-    </div>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/login.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Logowanie</span>
-    </div>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/register.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Rejestracja</span>
-    </div>
+  <?php
+  include_once 'navBar.php';
+  ?>
+
+  <div class="bg-neutral-500 shadow-md shadow-neutral-500 p-8 flex-wrap opacity-90">
+    <form action="">
+      <div class="mt-4">
+        
+        <div>
+          <label class="block text-6xl " for="email">Email<label>
+              <input type="text" placeholder="" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-6xl " for="email">Password<label>
+              <input type="password" placeholder="" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
+        </div>
+
+        <div class="flex items-baseline justify-between text-4xl">
+          <button class="px-6 py-6 mt-10 text-white rounded-lg bg-neutral-600 hover:bg-neutral-700">Login</button>
+        </div>
+
+      </div>
+    </form>
   </div>
 
-  <div class="min-h-full grow flex flex-row w-full opacity-90">
+  <script src="com_script.js"></script>
 </body>
 
 </html>

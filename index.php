@@ -25,30 +25,15 @@
 
 <body class="min-h-full flex flex-col p-2 bg-neutral-200 text-neutral-100">
 
-  <div class="flex h-20 w-full bg-neutral-700 shadow-md shadow-neutral-500 mb-2 opacity-90 items-center pl-4 text-4xl">
-    <div class="flex flex-row max-h-full mr-2 block md:hidden">
-      <img src="/res/sidebar.svg" class="w-12" onclick="openSidebar()" />
-    </div>
-    <span class="grow" id="title">Betabooks</span>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/send.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Koszyk</span>
-    </div>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/login.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Logowanie</span>
-    </div>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/register.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Rejestracja</span>
-    </div>
-  </div>
+  <?php
+  include_once 'navBar.php';
+  ?>
 
   <div class="min-h-full grow flex flex-row w-full opacity-90">
     <div class="basis-80 shrink-0 basis-0 flex flex-col md:basis-80 md:mr-2 bg-neutral-500 shadow-md shadow-neutral-500 text-3xl truncate md:p-2" style="transition: 0.3s;" id="sidebar">
       <ul>
         <?php
-        require 'db_credentials.php';
+        include_once 'db_credentials.php';
 
         $conn = new mysqli($servername, $username, $password, $database);
 
@@ -74,7 +59,7 @@
         ?>
       </ul>
     </div>
-    <div class="w-full grid grid-cols-1 md:grid-cols-4 auto-rows-min gap-3 p-3 bg-neutral-400 shadow-md shadow-neutral-500 text-neutral-600 ">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 auto-rows-min gap-3 p-3 bg-neutral-400 shadow-md shadow-neutral-500 text-neutral-600 ">
       <?php
       require 'db_credentials.php';
 
@@ -85,7 +70,7 @@
         //INNER JOIN book_authors ON author_id = book_authors.id";
 
         $cat = $_GET['cat'];
-        if(empty($cat)) $cat = "Comics";
+        if (empty($cat)) $cat = "Comics";
 
         $sql = 'SELECT books.id, title, first_name, last_name, sub_cat, cat FROM books 
           INNER JOIN book_authors ON author_id = book_authors.id
@@ -107,7 +92,7 @@
                   <h1 class="font-bold"> ' . $row["title"] . ' </h1> <br />
                   ' . $row["first_name"] . ' ' . $row["last_name"] . '
                 </div>
-                <div class="h-14 w-full border-2 border-neutral-600 text-lg items-center flex items-center justify-center" onclick="addCart(' . $row["id"] . ')">
+                <div class="h-14 w-full border-2 border-neutral-600 text-lg items-center flex items-center justify-center truncate" onclick="addCart(' . $row["id"] . ')">
                   DODAJ DO KOSZYKA
                 </div>
               </div>
@@ -122,35 +107,8 @@
       ?>
 
     </div>
-
-    <script>
-      function openSidebar() {
-        var sb = document.getElementById("sidebar")
-        if (sb.clientWidth > 0) {
-          sb.classList.add('basis-0');
-          sb.classList.remove('mr-2');
-          sb.classList.remove('p-2');
-        } else {
-          sb.classList.remove('basis-0');
-          sb.classList.add('mr-2');
-          sb.classList.add('p-2');
-        }
-      }
-
-      function openCat(el) {
-        window.location.href = '?cat=' + el.innerText.replace('&', '').replace(/\s+/g, '');
-      }
-
-      function openBook(id) {
-        console.log("open")
-        window.location.href = "/book?id=" + id;
-      }
-
-      function addCart(el) {
-        console.log("add")
-      }
-    </script>
-
+    
+    <script src="com_script.js"></script>
 </body>
 
 </html>

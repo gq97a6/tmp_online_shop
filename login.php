@@ -25,26 +25,13 @@
 
 <body class="min-h-full flex flex-col p-2 bg-neutral-200 text-neutral-100">
 
-  <div class="flex h-20 w-full bg-neutral-700 shadow-md shadow-neutral-500 mb-2 opacity-90 items-center pl-4 text-4xl">
-    <div class="flex flex-row max-h-full mr-2 block md:hidden">
-      <img src="/res/sidebar.svg" class="w-12" onclick="openSidebar()" />
-    </div>
-    <span class="grow" id="title">Betabooks</span>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/send.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Koszyk</span>
-    </div>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/login.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Logowanie</span>
-    </div>
-    <div class="flex flex-row max-h-full mr-4 md:mr-10">
-      <img src="/res/register.svg" class="w-12 mr-1" />
-      <span class="hidden md:block">Rejestracja</span>
-    </div>
-  </div>
+  <?php
+  include_once 'navBar.php';
+  ?>
 
-  <div class="min-h-full grow flex flex-row w-full opacity-90">
+  <div class="min-h-full grow flex flex-row w-full opacity-90"> </div>
+
+  <script src="com_script.js"></script>
 </body>
 
 </html>
