@@ -25,13 +25,68 @@
 
 <body class="min-h-full flex flex-col p-2 bg-neutral-200 text-neutral-100">
 
-  <?php
-  include 'navBar.php';
-  ?>
+  <div class="flex h-20 w-full bg-neutral-700 shadow-md shadow-neutral-500 mb-2 opacity-90 items-center pl-4 text-4xl">
+    <div class="flex flex-row max-h-full mr-2 block md:hidden">
+      <img src="/res/sidebar.svg" class="w-12" onclick="openSidebar()" />
+    </div>
+    <span class="grow" id="title" onclick='g("/")' >Betabooks</span>
+    <div class="flex flex-row max-h-full mr-4 md:mr-10" onclick='g("purchase")'>
+      <img src="/res/send.svg" class="w-12 mr-1" />
+      <span class="hidden md:block">Przejdź do dostawy</span>
+    </div>
+  </div>
 
-  <div class="min-h-full grow flex flex-row w-full opacity-90"></div>
+  <div class="min-h-full grow flex flex-row w-full opacity-90">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 auto-rows-min gap-3 p-3 bg-neutral-400 shadow-md shadow-neutral-500 text-neutral-600 ">
+      <?php
+      require 'db_credentials.php';
 
-  <script src="com_script.js"></script>
+      $conn = new mysqli($servername, $username, $password, $database);
+
+      if (!$conn->connect_error) {
+        //$sql = "SELECT title, first_name, last_name FROM books 
+        //INNER JOIN book_authors ON author_id = book_authors.id";
+
+        $cat = $_GET['cat'];
+        if (empty($cat)) $cat = "Comics";
+
+        $sql = 'SELECT books.id, title, first_name, last_name, sub_cat, cat FROM books 
+          INNER JOIN book_authors ON author_id = book_authors.id
+          INNER JOIN book_sub_categories ON sub_cat_id = book_sub_categories.id
+          INNER JOIN book_categories ON cat_id = book_categories.id
+          WHERE REPLACE(REPLACE(cat, "&", ""), " ", "") = "' . $cat . '"';
+
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+          $cat = "";
+          while ($row = $result->fetch_assoc()) {
+            echo '<div class="bg-neutral-200 aspect-video p-3 flex flex-row">
+              <div class="aspect-square border-2 border-neutral-600" onclick="openBook(' . $row["id"] . ')">
+                <img src="/res/placeholder.svg" class="w-full mr-1" />
+              </div>
+              <div class="grow pl-2 flex flex-col">
+                <div class="grow text-2xl p-2">
+                  <h1 class="font-bold"> ' . $row["title"] . ' </h1> <br />
+                  ' . $row["first_name"] . ' ' . $row["last_name"] . '
+                </div>
+                <div class="h-14 w-full border-2 border-neutral-600 text-lg items-center flex items-center justify-center truncate" onclick="addCart(' . $row["id"] . ')">
+                  USUŃ Z KOSZYKA
+                </div>
+              </div>
+            </div>';
+          }
+        } else {
+          echo "0 results";
+        }
+
+        $conn->close();
+      }
+      ?>
+
+    </div>
+    
+    <script src="com_script.js"></script>
 </body>
 
 </html>

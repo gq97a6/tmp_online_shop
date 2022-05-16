@@ -1,3 +1,7 @@
+<?php
+if (!isset($_SESSION)) session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en" class="h-full w-full">
 
@@ -29,28 +33,82 @@
   include_once 'navBar.php';
   ?>
 
-  <div class="bg-neutral-500 shadow-md shadow-neutral-500 p-8 flex-wrap opacity-90">
-    <form action="">
+  <?php
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      $_SESSION['postdata'] = $_POST;
+      unset($_POST);
+      header("Location: register");
+      exit;
+    }
+  }
+  ?>
+
+  <?php
+  if (array_key_exists('postdata', $_SESSION)) {
+
+    $email = $_SESSION['postdata']['email'];
+    $pass = $_SESSION['postdata']['password'];
+
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) $e = "";
+    else $e = "E-mail nie prawidłowy";
+
+    $uppercase = preg_match('@[A-Z]@', $pass);
+    $lowercase = preg_match('@[a-z]@', $pass);
+    $number = preg_match('@[0-9]@', $pass);
+    $specialChars = preg_match('@[^\w]@', $pass);
+
+    if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($pass) < 8) {
+      $p = 'Długość powyżej 8 znaków. Wymagana duże i małe litery, liczba oraz znak specjalny';
+    } else {
+      $p =  '';
+    }
+
+    if (strlen($p) + strlen($e) == 0) {
+      $subject = 'Test';
+      $message = 'https://betadomain.site/confirm_registration?h=5727857816738';
+      $headers = 'From: rejestracja@betadomain.site' . "\r\n" .
+        'Reply-To: rejestracja@betadomain.site' . "\r\n" .
+        'X-Mailer: PHP/' . phpversion();
+
+      mail($email, $subject, $message, $headers);
+      $success = true;
+    }
+
+    unset($_SESSION['postdata']);
+  }
+  ?>
+
+  <?php
+  if (!$success) echo '<div class="bg-neutral-500 shadow-md shadow-neutral-500 p-8 flex-wrap opacity-90">
+    <form action="register" method="post">
       <div class="mt-4">
-        
+
         <div>
-          <label class="block text-6xl " for="email">Email<label>
-              <input type="text" placeholder="" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
+          <label class="block text-6xl " for="email">E-mail<label>
+              <input type="text" placeholder="' . $e . '" name="email" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
         </div>
 
         <div class="mt-4">
-          <label class="block text-6xl " for="email">Password<label>
-              <input type="password" placeholder="" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
+          <label class="block text-6xl " for="password">Hasło<label>
+              <input type="password" placeholder="' . $p . '" name="password" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
         </div>
 
         <div class="flex items-baseline justify-between text-4xl">
-          <button class="px-6 py-6 mt-10 text-white rounded-lg bg-neutral-600 hover:bg-neutral-700">Login</button>
+          <button class="px-6 py-6 mt-10 text-white rounded-lg bg-neutral-600 hover:bg-neutral-700">Rejestracja</button>
         </div>
 
       </div>
     </form>
-  </div>
+  </div>'
+  ?>
 
+  <?php
+  if ($success) echo '<div class="bg-neutral-500 shadow-md shadow-neutral-500 p-20 opacity-90 text-center">
+    <p class="text-9xl"> Rejestracja zakończona sukcesem</p>
+    <p class="text-6xl pt-10"> Proszę sprawdzić skrzynkę pocztową</p>
+  </div>'
+  ?>
   <script src="com_script.js"></script>
 </body>
 
