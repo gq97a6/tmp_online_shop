@@ -1,3 +1,7 @@
+<?php
+if (!isset($_SESSION)) session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en" class="h-full w-full">
 
@@ -29,27 +33,70 @@
   include_once 'navBar.php';
   ?>
 
-  <div class="bg-neutral-500 shadow-md shadow-neutral-500 p-8 flex-wrap opacity-90">
-    <form action="">
+  <?php
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      $_SESSION['postdata'] = $_POST;
+      unset($_POST);
+      header("Location: login");
+      exit;
+    }
+  }
+  ?>
+
+  <?php
+  if (array_key_exists('postdata', $_SESSION)) {
+
+    $email = $_SESSION['postdata']['email'];
+    $pass = $_SESSION['postdata']['password'];
+    unset($_SESSION['postdata']);
+
+    include_once 'db_credentials.php';
+
+    $conn = new mysqli($servername, $username, $password, $database);
+    if (!$conn->connect_error) {
+
+      $sql = "SELECT * FROM `users` WHERE `users`.`email` = '" . $email . "' AND `users`.`confirm` = ''";
+      $result = $conn->query($sql);
+
+      if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+        if (password_verify($pass, $row['password'])) {
+          header("Location: index");
+          exit;
+        }
+      }
+
+      $e = "Nieprawidłowe dane logowania";
+
+      $conn->close();
+    }
+  }
+  ?>
+
+  <?php
+  if (!$success) echo '<div class="bg-neutral-500 shadow-md shadow-neutral-500 p-8 flex-wrap opacity-90">
+    <form action="login" method="post">
       <div class="mt-4">
-        
+
         <div>
           <label class="block text-6xl " for="email">E-mail<label>
-              <input type="text" placeholder="" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
+              <input type="text" placeholder="' . $e . '" name="email" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
         </div>
 
         <div class="mt-4">
-          <label class="block text-6xl " for="email">Hasło<label>
-              <input type="password" placeholder="" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
+          <label class="block text-6xl " for="password">Hasło<label>
+              <input type="password" placeholder="' . $e . '" name="password" class="text-5xl w-full px-4 py-2 mt-2 bg-neutral-600">
         </div>
-        
+
         <div class="flex items-baseline justify-between text-4xl">
-          <button class="px-6 py-6 mt-10 text-white rounded-lg bg-neutral-600 hover:bg-neutral-700">Login</button>
+          <button class="px-6 py-6 mt-10 text-white rounded-lg bg-neutral-600 hover:bg-neutral-700">Logowanie</button>
         </div>
 
       </div>
     </form>
-  </div>
+  </div>'
+  ?>
 
   <script src="com_script.js"></script>
 </body>

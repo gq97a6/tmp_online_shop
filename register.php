@@ -49,7 +49,8 @@ if (!isset($_SESSION)) session_start();
 
     $email = $_SESSION['postdata']['email'];
     $pass = $_SESSION['postdata']['password'];
-
+    unset($_SESSION['postdata']);
+    
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) $e = "";
     else $e = "E-mail nie prawidłowy";
 
@@ -65,17 +66,35 @@ if (!isset($_SESSION)) session_start();
     }
 
     if (strlen($p) + strlen($e) == 0) {
-      $subject = 'Test';
-      $message = 'https://betadomain.site/confirm_registration?h=5727857816738';
-      $headers = 'From: rejestracja@betadomain.site' . "\r\n" .
-        'Reply-To: rejestracja@betadomain.site' . "\r\n" .
-        'X-Mailer: PHP/' . phpversion();
+      include_once 'db_credentials.php';
 
-      mail($email, $subject, $message, $headers);
-      $success = true;
+      $conn = new mysqli($servername, $username, $password, $database);
+
+      if (!$conn->connect_error) {
+        $token = openssl_random_pseudo_bytes(16);
+        $token = bin2hex($token);
+
+        $sql = "SELECT * FROM `users` WHERE `users`.`email` = '" . $email . "'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows == 0) {
+          $sql = "INSERT INTO `users` (`id`, `email`, `password`, `confirm`) VALUES (NULL, '" . $email . "', '" .
+            password_hash($pass, PASSWORD_DEFAULT) . "', '" . $token . "');";
+
+          $conn->query($sql);
+          $conn->close();
+
+          $subject = 'Test';
+          $message = 'Proszę potwierdzić rejestrację: https://betadomain.site/confirm_registration?t=' . $token;
+          $headers = 'From: rejestracja@betadomain.site' . "\r\n" .
+            'Reply-To: rejestracja@betadomain.site' . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+
+          mail($email, $subject, $message, $headers);
+          $success = true;
+        } else $e = "E-mail zajęty";
+      }
     }
-
-    unset($_SESSION['postdata']);
   }
   ?>
 
