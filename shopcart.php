@@ -1,3 +1,7 @@
+<?php
+if (!isset($_SESSION)) session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en" class="h-full w-full">
 
@@ -29,7 +33,7 @@
     <div class="flex flex-row max-h-full mr-2 block md:hidden">
       <img src="/res/sidebar.svg" class="w-12" onclick="openSidebar()" />
     </div>
-    <span class="grow" id="title" onclick='g("/")' >Betabooks</span>
+    <span class="grow" id="title" onclick='g("/")' ><?php echo (isset($_SESSION['email'])) ? 'Witaj '.$_SESSION['email'] : 'Betabooks' ?></span>
     <div class="flex flex-row max-h-full mr-4 md:mr-10" onclick='g("purchase")'>
       <img src="/res/send.svg" class="w-12 mr-1" />
       <span class="hidden md:block">Przejdź do dostawy</span>
@@ -47,14 +51,12 @@
         //$sql = "SELECT title, first_name, last_name FROM books 
         //INNER JOIN book_authors ON author_id = book_authors.id";
 
-        $cat = $_GET['cat'];
-        if (empty($cat)) $cat = "Comics";
-
-        $sql = 'SELECT books.id, title, first_name, last_name, sub_cat, cat FROM books 
+        $sql = 'SELECT carts.id AS cartId, books.id as shelfId, title, first_name, last_name, sub_cat, cat FROM books 
           INNER JOIN book_authors ON author_id = book_authors.id
           INNER JOIN book_sub_categories ON sub_cat_id = book_sub_categories.id
           INNER JOIN book_categories ON cat_id = book_categories.id
-          WHERE REPLACE(REPLACE(cat, "&", ""), " ", "") = "' . $cat . '"';
+          INNER JOIN carts ON books.id = carts.book_id
+          WHERE user_id = "' . $_SESSION['user_id'] . '"';
 
         $result = $conn->query($sql);
 
@@ -62,7 +64,7 @@
           $cat = "";
           while ($row = $result->fetch_assoc()) {
             echo '<div class="bg-neutral-200 aspect-video p-3 flex flex-row">
-              <div class="aspect-square border-2 border-neutral-600" onclick="openBook(' . $row["id"] . ')">
+              <div class="aspect-square border-2 border-neutral-600" onclick="openBook(' . $row["shelfId"] . ')">
                 <img src="/res/placeholder.svg" class="w-full mr-1" />
               </div>
               <div class="grow pl-2 flex flex-col">
@@ -70,7 +72,7 @@
                   <h1 class="font-bold"> ' . $row["title"] . ' </h1> <br />
                   ' . $row["first_name"] . ' ' . $row["last_name"] . '
                 </div>
-                <div class="h-14 w-full border-2 border-neutral-600 text-lg items-center flex items-center justify-center truncate" onclick="addCart(' . $row["id"] . ')">
+                <div class="h-14 w-full border-2 border-neutral-600 text-lg items-center flex items-center justify-center truncate" onclick="removeCart(' . $row["cartId"] . ')">
                   USUŃ Z KOSZYKA
                 </div>
               </div>

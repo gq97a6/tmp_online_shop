@@ -62,6 +62,8 @@ if (!isset($_SESSION)) session_start();
       if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
         if (password_verify($pass, $row['password'])) {
+          $_SESSION['user_id'] = $row['id'];
+          $_SESSION['email'] = $row['email'];
           header("Location: index");
           exit;
         }

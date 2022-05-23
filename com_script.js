@@ -20,8 +20,12 @@ function openBook(id) {
     window.location.href = "/book?id=" + id;
 }
 
-function addCart(el) {
-    console.log("add")
+function addCart(id) {
+    window.location.href = "/addBook?id=" + id;
+}
+
+function removeCart(id) {
+    window.location.href = "/removeBook?id=" + id;
 }
 
 function g(link) {
